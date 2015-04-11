@@ -1,0 +1,30 @@
+td.category {
+  background-color: #0000AF;
+  border-width: 2px;
+  border-style: outset;
+  border-bottom-color: #000088;
+  border-left-color: #0000EE;
+  border-right-color: #000099;
+  border-top-color: #0000FF;
+  width: 200px;
+  text-align: center;
+}
+
+body {
+  background-color: #00003A;
+  color: #EEEEEE;
+  margin-top: 0px;
+  margin-left: 0px;
+  margin-bottom: 0px;
+  margin-right: 0px;
+  text-align: center;
+}
+
+div#final_jeopardy_round table {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.answer {
+	height: 150px;
+}
