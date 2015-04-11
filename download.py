@@ -33,8 +33,7 @@ def create_archive_dir():
         os.mkdir(archive_folder)
 
 
-def download_pages():
-    page = 1
+def download_pages(page=1):
     with futures.ThreadPoolExecutor(max_workers=NUM_THREADS) as executor:
         # We submit NUM_THREADS tasks at a time since we don't know how many
         # pages we will need to download in advance
@@ -48,8 +47,11 @@ def download_pages():
             if not all(f.result() for f in l):
                 break
 
+def download_pages_set(set):
+    for page in set:
+        download_and_save_page(page, 0)
 
-def download_and_save_page(page):
+def download_and_save_page(page, sleep_time=SECONDS_BETWEEN_REQUESTS):
     new_file_name = "%s.html" % page
     destination_file_path = os.path.join(archive_folder, new_file_name)
     if not os.path.exists(destination_file_path):
@@ -60,7 +62,7 @@ def download_and_save_page(page):
             return False
         elif html:
             save_file(html, destination_file_path)
-            time.sleep(SECONDS_BETWEEN_REQUESTS)  # Remember to be kind to the server
+            time.sleep(sleep_time)  # Remember to be kind to the server
     else:
         print "Already downloaded %s" % destination_file_path
     return True
