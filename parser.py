@@ -55,10 +55,14 @@ def main_parser(args):
     
     for i, file_name in enumerate(glob(os.path.join(args.dir, "*.html")), 1):
         with open(os.path.abspath(file_name)) as f:
+            #print "parsing %s" % file_name
             gid = os.path.splitext(os.path.basename(file_name))[0]
+            sys.stdout.write("\r %s parsing %s as gid=%s" % ("{:.1%}".format(float(i)/float(NUMBER_OF_FILES)), file_name, gid))
+            sys.stdout.flush()
             parse_game(f, sql, int(gid))
     if not args.stdout:
         sql.commit()
+    print "\nAll done"
 
 
 def parse_game(f, sql, gid):
