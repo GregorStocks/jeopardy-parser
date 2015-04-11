@@ -52,12 +52,13 @@ def main_parser(args):
             FOREIGN KEY(clue_id) REFERENCES clues(id) ON DELETE CASCADE,
             FOREIGN KEY(category_id) REFERENCES categories(id) ON DELETE CASCADE
         );""")
+    
     for i, file_name in enumerate(glob(os.path.join(args.dir, "*.html")), 1):
         with open(os.path.abspath(file_name)) as f:
-            parse_game(f, sql, i)
+            gid = os.path.splitext(os.path.basename(file_name))[0]
+            parse_game(f, sql, int(gid))
     if not args.stdout:
         sql.commit()
-    print "All done"
 
 
 def parse_game(f, sql, gid):
