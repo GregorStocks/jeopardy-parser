@@ -169,5 +169,5 @@ if __name__ == "__main__":
                         action="store_true")
     parser.add_argument("--help", action="help",
                         help="show this help message and exit")
-    parser.add_argument("--version", action="version", version="2014.09.14")
+    parser.add_argument("--version", action="version", version="2015.04.11")
     main_parser(parser.parse_args())
