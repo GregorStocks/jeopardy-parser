@@ -62,7 +62,8 @@ def main_parser(args):
         with open(os.path.abspath(file_name)) as f:
             #print "parsing %s" % file_name
             gid = os.path.splitext(os.path.basename(file_name))[0]
-            sys.stdout.write("\r %s parsing %s as gid=%s" % ("{:.1%}".format(float(i)/float(NUMBER_OF_FILES)), file_name, gid))
+            #sys.stdout.write("\r %s parsing %s as gid=%s" % ("{:.1%}".format(float(i)/float(NUMBER_OF_FILES)), file_name, gid))
+            sys.stdout.write("\r %s done" % "{:.1%}".format(float(i)/float(NUMBER_OF_FILES)))
             sys.stdout.flush()
             parse_game(f, sql, int(gid))
     if not args.stdout:
