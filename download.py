@@ -21,7 +21,7 @@ except (ImportError, NotImplementedError):
     pass
 
 
-def main():
+def main_download():
     create_archive_dir()
     print "Downloading game files"
     download_pages()
@@ -90,4 +90,4 @@ def save_file(html, filename):
 
 
 if __name__ == "__main__":
-    main()
+    main_download()

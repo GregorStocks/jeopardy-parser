@@ -12,7 +12,7 @@ import sqlite3
 import sys
 
 
-def main(args):
+def main_parser(args):
     """Loop thru all the games and parse them."""
     if not os.path.isdir(args.dir):
         print "The specified folder is not a directory."
@@ -159,4 +159,4 @@ if __name__ == "__main__":
     parser.add_argument("--help", action="help",
                         help="show this help message and exit")
     parser.add_argument("--version", action="version", version="2014.09.14")
-    main(parser.parse_args())
+    main_parser(parser.parse_args())
