@@ -43,14 +43,14 @@ def main_parser(args):
             game INTEGER,
             round INTEGER,
             value INTEGER,
-            FOREIGN KEY(id) REFERENCES documents(id),
-            FOREIGN KEY(game) REFERENCES airdates(game)
+            FOREIGN KEY(id) REFERENCES documents(id) ON DELETE CASCADE,
+            FOREIGN KEY(game) REFERENCES airdates(game) ON DELETE CASCADE
         );""")
         sql.execute("""CREATE TABLE classifications(
             clue_id INTEGER,
             category_id INTEGER,
-            FOREIGN KEY(clue_id) REFERENCES clues(id),
-            FOREIGN KEY(category_id) REFERENCES categories(id)
+            FOREIGN KEY(clue_id) REFERENCES clues(id) ON DELETE CASCADE,
+            FOREIGN KEY(category_id) REFERENCES categories(id) ON DELETE CASCADE
         );""")
     for i, file_name in enumerate(glob(os.path.join(args.dir, "*.html")), 1):
         with open(os.path.abspath(file_name)) as f:
