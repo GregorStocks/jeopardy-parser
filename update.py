@@ -18,43 +18,52 @@ archive_folder = os.path.join(current_working_directory, "j-archive")
 # run download script
 # parse collected game ids and new ids and insert them into the database
 
-def update(args):    
+def update_games(update_days=30):    
     conn = sqlite3.connect('clues.db')
     conn.execute("""PRAGMA foreign_keys = ON;""")
     
     games = []
-    for row in conn.execute("""SELECT game from airdates ORDER BY airdate DESC LIMIT %s;""" % args.update_days):
+    dates = []
+    for row in conn.execute("""SELECT game, airdate from airdates ORDER BY airdate DESC LIMIT %s;""" % update_days):
         games.append(row[0])
+        dates.append(row[1])
         
     cursor = conn.execute('SELECT game FROM airdates ORDER BY game DESC LIMIT 1')
     last_game = int(cursor.fetchone()[0])
     next_game = last_game+1;
     
     delete_string = ",".join(map(str, games))
+    dates_string = ", ".join(map(str, dates))
     print "Latest saved game: %s" % last_game
-    print "Games to be deleted: %s" % delete_string
+    #print "Games deleted: %s" % delete_string
+    print "Dates deleted: %s" % dates_string
     
     # delete games from database
     conn.execute("""DELETE FROM airdates WHERE game in (%s); """ % delete_string)
     conn.commit()
     # delete games from disk
     for game in games:
-        print "Deleting %s/%s.html" % (archive_folder, game)
+        #print "Deleting %s/%s.html" % (archive_folder, game)
         os.remove('%s/%s.html' % (archive_folder, game))
     
     # download deleted games
+    print "Downloading deleted games"
     download.download_pages_set(games)
     # download new games
+    print "Downloading new games"
     download.download_pages(next_game)
     
     # parse downloaded deleted games
-    print "Parsing last month's games"
+    print "Parsing last %s games" % update_days
     
-    for game in games:
+    for i, game in enumerate(games):
         file_name = os.path.join(archive_folder, "%s.html" % game)
         f = open(file_name)
-        sys.stdout.write("\rparsing %s as gid=%s" % (file_name, game))
+        #sys.stdout.write("\rparsing %s as gid=%s" % (file_name, game))
+        #sys.stdout.flush()
+        sys.stdout.write("\r %s done" % "{:.1%}".format(float(i)/float(len(games))))
         sys.stdout.flush()
+
         parser.parse_game(f, conn, game)
         f.close()
     
@@ -66,12 +75,12 @@ def update(args):
         # glob does not return an ordered list so must get gid from filename
         gid = int(os.path.splitext(os.path.basename(file_name))[0])
         if (gid < next_game):
-            sys.stdout.write("\rskipping %s" % gid)
-            sys.stdout.flush()
+            #sys.stdout.write("\rskipping %s" % gid)
+            #sys.stdout.flush()
             continue
 
-        sys.stdout.write("\rparsing %s as gid=%s" % (file_name, gid))
-        sys.stdout.flush()
+        #sys.stdout.write("\rparsing %s as gid=%s" % (file_name, gid))
+        #sys.stdout.flush()
         f = open(os.path.abspath(file_name))
         parser.parse_game(f, conn, gid)
         f.close()
@@ -87,4 +96,5 @@ if __name__ == "__main__":
     arg_parser.add_argument("-u", "--update_days", dest="update_days", metavar="<number>",
                         help="the number of days to retroactively update",
                         default="30", type=int)
-    update(arg_parser.parse_args());
+    args = arg_parser.parse_args()
+    update_games(args.update_days)
