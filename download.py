@@ -16,7 +16,7 @@ try:
     import multiprocessing
     # Since it's a lot of IO let's double # of actual cores
     NUM_THREADS = multiprocessing.cpu_count() * 2
-    print 'Using {} threads'.format(NUM_THREADS)
+    # print 'Using {} threads'.format(NUM_THREADS)
 except (ImportError, NotImplementedError):
     pass
 
@@ -25,6 +25,7 @@ def main_download():
     create_archive_dir()
     print "Downloading game files"
     download_pages()
+    print "Finished downloading. Now parse."
 
 
 def create_archive_dir():
@@ -46,10 +47,15 @@ def download_pages(page=1):
             # Block and stop if we're done downloading the page
             if not all(f.result() for f in l):
                 break
+	
 
 def download_pages_set(set):
-    for page in set:
-        download_and_save_page(page, 0)
+    with futures.ThreadPoolExecutor(max_workers=NUM_THREADS) as executor:
+        for page in set:
+            f = executor.submit(download_and_save_page, page, 0)
+
+    #for page in set:
+    #    download_and_save_page(page, 0)
 
 def download_and_save_page(page, sleep_time=SECONDS_BETWEEN_REQUESTS):
     new_file_name = "%s.html" % page
@@ -58,7 +64,7 @@ def download_and_save_page(page, sleep_time=SECONDS_BETWEEN_REQUESTS):
         html = download_page(page)
         if ERROR_MSG in html:
             # Now we stop
-            print "Finished downloading. Now parse."
+            print "%s doesn't exist" % page
             return False
         elif html:
             save_file(html, destination_file_path)
