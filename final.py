@@ -7,8 +7,12 @@ from datetime import date
 import sqlite3
 import cgi
 import argparse
+import update
 
-def generate_html(begin_date, end_date, file_name):
+def generate_html(begin_date, end_date, file_name, update_games):
+    if (update_games):
+        update.update_games()
+
     conn = sqlite3.connect('clues.db')
     
     f = open(file_name, 'w')
@@ -54,7 +58,7 @@ def generate_html(begin_date, end_date, file_name):
 
 if __name__ == "__main__":
     arg_gen_html = argparse.ArgumentParser(
-        description="Update your database of games from the J! Archive website.", add_help=False,
+        description="Output the final rounds from games.", add_help=False,
         usage="%(prog)s [options]")
     arg_gen_html.add_argument("-b", "--begin_date", dest="begin_date", metavar="<date>",
                         help="the beginning date",
@@ -65,5 +69,7 @@ if __name__ == "__main__":
     arg_gen_html.add_argument("-f", "--file_name", dest="file_name", metavar="<filename>",
                         help="the filename for output",
                         default="final.html")
+    arg_gen_html.add_argument("--update_games", "-u", action='store_true',
+                        help="update games before generating html")
     args = arg_gen_html.parse_args()
-    generate_html(args.begin_date, args.end_date, args.file_name)
+    generate_html(args.begin_date, args.end_date, args.file_name, args.update_games)
