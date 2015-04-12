@@ -32,6 +32,10 @@ Outputting the final rounds
 ```bash
 python final.py
 ```
+Updating the database and outputting the final rounds
+```bash
+python final.py -u
+```
 
 How long will all this take?
 ----------------------------
