@@ -54,8 +54,6 @@ def download_pages_set(set):
         for page in set:
             f = executor.submit(download_and_save_page, page, 0)
 
-    #for page in set:
-    #    download_and_save_page(page, 0)
 
 def download_and_save_page(page, sleep_time=SECONDS_BETWEEN_REQUESTS):
     new_file_name = "%s.html" % page
