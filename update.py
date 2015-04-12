@@ -26,7 +26,7 @@ def update(args):
     for row in conn.execute("""SELECT game from airdates ORDER BY airdate DESC LIMIT %s;""" % args.update_days):
         games.append(row[0])
         
-    cursor = conn.execute('SELECT max(game) FROM airdates')
+    cursor = conn.execute('SELECT game FROM airdates ORDER BY game DESC LIMIT 1')
     last_game = int(cursor.fetchone()[0])
     next_game = last_game+1;
     
