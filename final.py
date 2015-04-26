@@ -14,6 +14,7 @@ def generate_html(begin_date, end_date, file_name, update_games, update_days):
         update.update_games(update_days)
 
     conn = sqlite3.connect('clues.db')
+    conn.row_factory = sqlite3.Row
     
     f = open(file_name, 'w')
     
@@ -39,9 +40,11 @@ def generate_html(begin_date, end_date, file_name, update_games, update_days):
         WHERE round=3 AND (airdate BETWEEN '%s' AND '%s')
         ORDER BY airdate;
         """ % (begin_date, end_date)):
-        print (row[0], file=f)
-        print ("<table><tr><td class='category'><div id='%s-cat'>%s</div></td></tr>" % (i, cgi.escape(row[1].encode("utf8"))), file=f)
-        print ("<tr><td class='category answer'><div id=%s-clue>%s</div><div id='%s-answer' style='display: none'>%s</div></td></tr>" % (i, cgi.escape(row[2].encode("utf8")), i, cgi.escape(row[3].encode("utf8"))), file=f)
+        print (row['airdate'], file=f)
+        print ("<table><tr><td class='category'><div id='%s-cat'>%s</div></td></tr>" 
+            % (i, cgi.escape(row['category'].encode("utf8"))), file=f)
+        print ("<tr><td class='category answer'><div id=%s-clue>%s</div><div id='%s-answer' style='display: none'>%s</div></td></tr>" 
+            % (i, cgi.escape(row['clue'].encode("utf8")), i, cgi.escape(row['answer'].encode("utf8"))), file=f)
         print ('</table>', file=f)
         print ("""<script>
                     $('#%s-cat').hover(function () {
