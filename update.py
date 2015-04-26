@@ -21,15 +21,16 @@ archive_folder = os.path.join(current_working_directory, "j-archive")
 def update_games(update_days=30):    
     conn = sqlite3.connect('clues.db')
     conn.execute("""PRAGMA foreign_keys = ON;""")
+    conn.row_factory = sqlite3.Row
     
     games = []
     dates = []
     for row in conn.execute("""SELECT game, airdate from airdates ORDER BY airdate DESC LIMIT %s;""" % update_days):
-        games.append(row[0])
-        dates.append(row[1])
+        games.append(row['game'])
+        dates.append(row['airdate'])
         
     cursor = conn.execute('SELECT game FROM airdates ORDER BY game DESC LIMIT 1')
-    last_game = int(cursor.fetchone()[0])
+    last_game = int(cursor.fetchone()['game'])
     next_game = last_game+1;
     
     delete_string = ",".join(map(str, games))
