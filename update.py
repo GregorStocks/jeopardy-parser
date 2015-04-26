@@ -35,15 +35,14 @@ def update_games(update_days=30):
     delete_string = ",".join(map(str, games))
     dates_string = ", ".join(map(str, dates))
     print "Latest saved game: %s" % last_game
-    #print "Games deleted: %s" % delete_string
     print "Dates deleted: %s" % dates_string
     
     # delete games from database
     conn.execute("""DELETE FROM airdates WHERE game in (%s); """ % delete_string)
     conn.commit()
+    
     # delete games from disk
     for game in games:
-        #print "Deleting %s/%s.html" % (archive_folder, game)
         os.remove('%s/%s.html' % (archive_folder, game))
     
     # download deleted games
@@ -59,8 +58,6 @@ def update_games(update_days=30):
     for i, game in enumerate(games):
         file_name = os.path.join(archive_folder, "%s.html" % game)
         f = open(file_name)
-        #sys.stdout.write("\rparsing %s as gid=%s" % (file_name, game))
-        #sys.stdout.flush()
         sys.stdout.write("\r %s done" % "{:.1%}".format(float(i)/float(len(games))))
         sys.stdout.flush()
 
@@ -75,12 +72,8 @@ def update_games(update_days=30):
         # glob does not return an ordered list so must get gid from filename
         gid = int(os.path.splitext(os.path.basename(file_name))[0])
         if (gid < next_game):
-            #sys.stdout.write("\rskipping %s" % gid)
-            #sys.stdout.flush()
             continue
 
-        #sys.stdout.write("\rparsing %s as gid=%s" % (file_name, gid))
-        #sys.stdout.flush()
         f = open(os.path.abspath(file_name))
         parser.parse_game(f, conn, gid)
         f.close()
