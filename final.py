@@ -9,9 +9,9 @@ import cgi
 import argparse
 import update
 
-def generate_html(begin_date, end_date, file_name, update_games):
+def generate_html(begin_date, end_date, file_name, update_games, update_days):
     if (update_games):
-        update.update_games()
+        update.update_games(update_days)
 
     conn = sqlite3.connect('clues.db')
     
@@ -71,5 +71,8 @@ if __name__ == "__main__":
                         default="final.html")
     arg_gen_html.add_argument("--update_games", "-u", action='store_true',
                         help="update games before generating html")
+    arg_gen_html.add_argument("-d", "--update_days", dest="update_days", metavar="<number>",
+                        help="the number of days to retroactively update",
+                        default="30", type=int)
     args = arg_gen_html.parse_args()
-    generate_html(args.begin_date, args.end_date, args.file_name, args.update_games)
+    generate_html(args.begin_date, args.end_date, args.file_name, args.update_games, args.update_days)
