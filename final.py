@@ -9,7 +9,7 @@ import cgi
 import argparse
 import update
 
-def generate_html(begin_date, end_date, file_name, update_games, update_days):
+def generate_html(begin_date, end_date, file_name, update_games, update_days, problem_days):
     if (update_games):
         update.update_games(update_days)
 
@@ -31,19 +31,27 @@ def generate_html(begin_date, end_date, file_name, update_games, update_days):
 
     i = 0
     for row in conn.execute("""
-        SELECT airdate, category, clue, answer 
+        SELECT airdate, category, clue, answer, airdates.game, (airdates.game IN (SELECT * FROM problemgames)) AS problemgame
         FROM clues 
         JOIN airdates ON clues.game = airdates.game 
         JOIN documents ON clues.id = documents.id 
         JOIN classifications ON clues.id = classifications.clue_id 
-        JOIN categories ON classifications.category_id = categories.id 
-        WHERE round=3 AND (airdate BETWEEN '%s' AND '%s')
+        JOIN categories ON classifications.category_id = categories.id
+        WHERE round=3 AND (airdate BETWEEN '%s' AND '%s') AND airdates.game NOT IN (SELECT * FROM usedgames)
         ORDER BY airdate;
         """ % (begin_date, end_date)):
-        print (row['airdate'], file=f)
-        print ("<table><tr><td class='category'><div id='%s-cat'>%s</div></td></tr>" 
-            % (i, cgi.escape(row['category'].encode("utf8"))), file=f)
-        print ("<tr><td class='category answer'><div id=%s-clue>%s</div><div id='%s-answer' style='display: none'>%s</div></td></tr>" 
+        if (problem_days and not(row['problemgame'])):
+            continue
+        print ("%s - %s" % (row['airdate'], row['game']), file=f)
+        print ("<table id=%s-table><tr><td class='category'><div id='%s-cat'>%s</div></td></tr>" 
+            % (i, i, cgi.escape(row['category'].encode("utf8"))), file=f)
+        
+        if (row['problemgame'] == 1):
+            print ("<tr><td class='problemgame category answer'>", file=f)
+        else: 
+            print ("<tr><td class='category answer'>", file=f)
+        
+        print ("<div id=%s-clue>%s</div><div id='%s-answer' style='display: none'>%s</div></td></tr>" 
             % (i, cgi.escape(row['clue'].encode("utf8")), i, cgi.escape(row['answer'].encode("utf8"))), file=f)
         print ('</table>', file=f)
         print ("""<script>
@@ -78,5 +86,7 @@ if __name__ == "__main__":
     arg_gen_html.add_argument("-d", "--update_days", dest="update_days", metavar="<number>",
                         help="the number of days to retroactively update",
                         default="30", type=int)
+    arg_gen_html.add_argument("-p", "--problem_days", action='store_true',
+                        help="output only problematic games")
     args = arg_gen_html.parse_args()
-    generate_html(args.begin_date, args.end_date, args.file_name, args.update_games, args.update_days)
+    generate_html(args.begin_date, args.end_date, args.file_name, args.update_games, args.update_days, args.problem_days)

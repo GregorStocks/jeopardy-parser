@@ -59,7 +59,15 @@ def main_parser(args):
         );""")
         sql.execute("""CREATE INDEX "classClueID" ON "classifications"("clue_id");""")
         sql.execute("""CREATE INDEX "classCatagoryID" ON "classifications"("category_id");""")
-    
+        
+        sql.execute("""CREATE TABLE usedgames(
+            game_id INTEGER
+        );""")
+
+        sql.execute("""CREATE TABLE problemgames(
+            game_id INTEGER
+        );""")
+
     for i, file_name in enumerate(glob(os.path.join(args.dir, "*.html")), 1):
         with open(os.path.abspath(file_name)) as f:
             #print "parsing %s" % file_name

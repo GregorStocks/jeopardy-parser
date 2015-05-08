@@ -1,4 +1,5 @@
-td.category {
+
+.category {
   background-color: #0000AF;
   border-width: 2px;
   border-style: outset;
@@ -9,6 +10,7 @@ td.category {
   width: 200px;
   text-align: center;
 }
+
 
 body {
   background-color: #00003A;
@@ -27,4 +29,8 @@ div#final_jeopardy_round table {
 
 .answer {
 	height: 150px;
+}
+
+.problemgame {
+    background-color: #505050;
 }
