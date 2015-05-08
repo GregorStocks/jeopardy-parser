@@ -47,10 +47,11 @@ def generate_html(begin_date, end_date, file_name, update_games, update_days):
             % (i, cgi.escape(row['clue'].encode("utf8")), i, cgi.escape(row['answer'].encode("utf8"))), file=f)
         print ('</table>', file=f)
         print ("""<script>
-                    $('#%s-cat').hover(function () {
+                    $('#%s-table').hover(function () {
                         $('#%s-clue').toggle();
                         $('#%s-answer').toggle();
                     })
+                    
             </script>""" % (i, i, i), file=f)
         print ('<br /> <br /> <br />', file=f)
         i += 1
