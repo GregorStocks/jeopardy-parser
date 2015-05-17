@@ -44,7 +44,10 @@ def update_games(update_days=30):
     
     # delete games from disk
     for game in games:
-        os.remove('%s/%s.html' % (archive_folder, game))
+        try:
+            os.remove('%s/%s.html' % (archive_folder, game))
+        except OSError:
+            print "File for game %s not found" % game
     
     # download deleted games
     print "Downloading deleted games"
