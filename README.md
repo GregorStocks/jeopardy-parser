@@ -8,7 +8,7 @@ What is this?
 
 This is a Python script to extract [Jeopardy!] clues from the [J! Archive] website and dump them into a SQLite database for use elsewhere (no particular application is intended). Python 2.7.* and SQLite 3.7.* on *nix have been tested and confirmed to work (requires BeautifulSoup 4 and the lxml parser).
 
-This fork includes updating the sqlite database based on date without having to re-create the database, and a flashcard-like output for reading final jeopardy categories, clues and answers.
+*This fork includes updating the database based on date without having to re-create the database, game ID matches archive game number, and a flashcard-like HTML/CSS/JavaScript output for reading final jeopardy categories, clues and answers.*
 
   [Jeopardy!]:http://www.jeopardy.com/
   [J! Archive]:http://j-archive.com/
