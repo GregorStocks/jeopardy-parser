@@ -5,59 +5,24 @@ import itertools
 import os
 import urllib.request, urllib.error, urllib.parse
 import time
-import concurrent.futures as futures
 import ssl
 import time
 
 current_working_directory = os.path.dirname(os.path.abspath(__file__))
 archive_folder = os.path.join(current_working_directory, "j-archive")
-SECONDS_BETWEEN_REQUESTS = 5
+SECONDS_BETWEEN_REQUESTS = 1
 ERROR_MSG = "ERROR: No game"
-NUM_THREADS = 2  # Be conservative
-try:
-    import multiprocessing
-    # Since it's a lot of IO let's double # of actual cores
-    NUM_THREADS = multiprocessing.cpu_count() * 2
-    print(f'Using {NUM_THREADS} threads')
-except (ImportError, NotImplementedError):
-    pass
-
 
 def main_download():
-    create_archive_dir()
-    print("Downloading game files")
-    download_pages()
-    print("Finished downloading. Now parse.")
-
-
-def create_archive_dir():
     if not os.path.isdir(archive_folder):
         print(("Making %s" % archive_folder))
         os.mkdir(archive_folder)
-
-
-def download_pages(page=1):
-    with futures.ThreadPoolExecutor(max_workers=NUM_THREADS) as executor:
-        # We submit NUM_THREADS tasks at a time since we don't know how many
-        # pages we will need to download in advance
-        while True:
-            l = []
-            for i in range(NUM_THREADS):
-                f = executor.submit(download_and_save_page, page)
-                l.append(f)
-                page += 1
-                # sleep a bit so the threads are offset
-                time.sleep(1)
-            # Block and stop if we're done downloading the page
-            if not all(f.result() for f in l):
-                break
-	
-
-def download_pages_set(set):
-    with futures.ThreadPoolExecutor(max_workers=NUM_THREADS) as executor:
-        for page in set:
-            f = executor.submit(download_and_save_page, page, 0)
-
+    print("Downloading game files")
+    while True:
+        if not download_and_save_page(page):
+            print("Finished downloading. Now parse.")
+            return
+        page += 1
 
 def download_and_save_page(page, sleep_time=SECONDS_BETWEEN_REQUESTS):
     new_file_name = "%s.html" % page
