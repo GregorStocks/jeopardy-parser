@@ -6,6 +6,8 @@ import os
 import urllib.request, urllib.error, urllib.parse
 import time
 import concurrent.futures as futures
+import ssl
+import time
 
 current_working_directory = os.path.dirname(os.path.abspath(__file__))
 archive_folder = os.path.join(current_working_directory, "j-archive")
@@ -16,7 +18,6 @@ try:
     import multiprocessing
     # Since it's a lot of IO let's double # of actual cores
     NUM_THREADS = multiprocessing.cpu_count() * 2
-    NUM_THREADS = 4
     print(f'Using {NUM_THREADS} threads')
 except (ImportError, NotImplementedError):
     pass
@@ -45,6 +46,8 @@ def download_pages(page=1):
                 f = executor.submit(download_and_save_page, page)
                 l.append(f)
                 page += 1
+                # sleep a bit so the threads are offset
+                time.sleep(1)
             # Block and stop if we're done downloading the page
             if not all(f.result() for f in l):
                 break
@@ -74,10 +77,13 @@ def download_and_save_page(page, sleep_time=SECONDS_BETWEEN_REQUESTS):
 
 
 def download_page(page):
-    url = 'http://j-archive.com/showgame.php?game_id=%s' % page
+    url = 'https://j-archive.com/showgame.php?game_id=%s' % page
     html = None
     try:
-        response = urllib.request.urlopen(url)
+        context = ssl.create_default_context()
+        context.check_hostname=False
+        context.verify_mode = ssl.CERT_NONE
+        response = urllib.request.urlopen(url, context=context)
         if response.code == 200:
             print(("Downloading %s" % url))
             html = response.read()
