@@ -1,7 +1,7 @@
 #!/usr/bin/env python -OO
 # -*- coding: utf-8 -*-
 
-from __future__ import with_statement
+
 from glob import glob
 
 import os
@@ -26,8 +26,8 @@ def update_games(range_string):
     dates = []
 
     (begin, end) = range_string.split('-')
-    print "begin: %s, end: %s" % (begin, end)
-    range_set = range(int(begin), int(end))
+    print("begin: %s, end: %s" % (begin, end))
+    range_set = list(range(int(begin), int(end)))
 	
     for row in conn.execute("""SELECT game, airdate FROM airdates WHERE game >= %s AND game <= %s ORDER BY airdate ;""" % (begin, end)):
         games.append(row['game'])
@@ -35,7 +35,7 @@ def update_games(range_string):
             
     delete_string = ",".join(map(str, games))
     dates_string = ", ".join(map(str, dates))
-    print "Dates deleted: %s" % dates_string
+    print("Dates deleted: %s" % dates_string)
     
     # delete games from database
     conn.execute("""DELETE FROM airdates WHERE game in (%s); """ % delete_string)
@@ -46,14 +46,14 @@ def update_games(range_string):
         try:
             os.remove('%s/%s.html' % (archive_folder, game))
         except OSError:
-            print "File for game %s not found" % game
+            print("File for game %s not found" % game)
     
     # download games in the range
-    print "Downloading games"
+    print("Downloading games")
     download.download_pages_set(range_set)
      
     # parse downloaded deleted games
-    print "Parsing games"
+    print("Parsing games")
     
     for i, game in enumerate(range_set):
         file_name = os.path.join(archive_folder, "%s.html" % game)
@@ -66,7 +66,7 @@ def update_games(range_string):
                 
     conn.commit()
     conn.close()
-    print ""
+    print("")
     
 
 if __name__ == "__main__":

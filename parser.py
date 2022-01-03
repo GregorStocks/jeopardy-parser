@@ -1,7 +1,7 @@
 #!/usr/bin/env python -OO
 # -*- coding: utf-8 -*-
 
-from __future__ import with_statement
+
 from bs4 import BeautifulSoup
 from glob import glob
 
@@ -15,12 +15,12 @@ import sys
 def main_parser(args):
     """Loop thru all the games and parse them."""
     if not os.path.isdir(args.dir):
-        print "The specified folder is not a directory."
+        print("The specified folder is not a directory.")
         sys.exit(1)
     NUMBER_OF_FILES = len(os.listdir(args.dir))
     if args.num_of_files:
         NUMBER_OF_FILES = args.num_of_files
-    print "Parsing", NUMBER_OF_FILES, "files"
+    print("Parsing", NUMBER_OF_FILES, "files")
     sql = None
     if not args.stdout:
         sql = sqlite3.connect(args.database)
@@ -78,7 +78,7 @@ def main_parser(args):
             parse_game(f, sql, int(gid))
     if not args.stdout:
         sql.commit()
-    print "\nAll done"
+    print("\nAll done")
 
 
 def parse_game(f, sql, gid):
@@ -171,7 +171,7 @@ def insert(sql, clue):
     if "\\\"" in clue[8]:
         clue[6] = clue[8].replace("\\\"", "\"")
     if not sql:
-        print clue
+        print(clue)
         return
     sql.execute(
         "INSERT OR IGNORE INTO airdates VALUES(?, ?, ?, ?);",

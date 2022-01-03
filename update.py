@@ -1,7 +1,7 @@
 #!/usr/bin/env python -OO
 # -*- coding: utf-8 -*-
 
-from __future__ import with_statement
+
 from glob import glob
 
 import os
@@ -35,8 +35,8 @@ def update_games(update_days=30):
     
     delete_string = ",".join(map(str, games))
     dates_string = ", ".join(map(str, dates))
-    print "Latest saved game: %s" % last_game
-    print "Dates deleted: %s" % dates_string
+    print("Latest saved game: %s" % last_game)
+    print("Dates deleted: %s" % dates_string)
     
     # delete games from database
     conn.execute("""DELETE FROM airdates WHERE game in (%s); """ % delete_string)
@@ -47,17 +47,17 @@ def update_games(update_days=30):
         try:
             os.remove('%s/%s.html' % (archive_folder, game))
         except OSError:
-            print "File for game %s not found" % game
+            print("File for game %s not found" % game)
     
     # download deleted games
-    print "Downloading deleted games"
+    print("Downloading deleted games")
     download.download_pages_set(games)
     # download new games
-    print "Downloading new games"
+    print("Downloading new games")
     download.download_pages(next_game)
     
     # parse downloaded deleted games
-    print "Parsing last %s games" % update_days
+    print("Parsing last %s games" % update_days)
     
     for i, game in enumerate(games):
         file_name = os.path.join(archive_folder, "%s.html" % game)
@@ -69,8 +69,8 @@ def update_games(update_days=30):
         f.close()
     
     # parse previously deleted games
-    print ""
-    print "Parsing new games, starting from %s" % next_game
+    print("")
+    print("Parsing new games, starting from %s" % next_game)
     
     for file_name in glob(os.path.join(archive_folder, "*.html")):
         # glob does not return an ordered list so must get gid from filename
