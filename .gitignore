@@ -6,3 +6,4 @@
 *.py[co]
 
 j-archive
+venv
