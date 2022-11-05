@@ -13,7 +13,7 @@ archive_folder = os.path.join(current_working_directory, "j-archive")
 SECONDS_BETWEEN_REQUESTS = 1
 ERROR_MSG = "ERROR: No game"
 
-def main_download():
+def main_download(page=1):
     if not os.path.isdir(archive_folder):
         print(("Making %s" % archive_folder))
         os.mkdir(archive_folder)
